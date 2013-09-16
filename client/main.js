@@ -5,15 +5,28 @@ function init() {
 			name: 'unnamed',
 			length: 0,
 			content: ''
+		},
+
+		initialize: function() {
+			console.log("file initialize()");
+			this.set('length', this.get('content').length);
 		}
 	});
 
 	var Files = Backbone.Collection.extend({
-		model: File
+		model: File,
+		initialize: function() {
+			console.log("files initialize()");
+		},
+		url: '/files'
 	});
 
 	var FilenameView = Backbone.View.extend({
 		template: _.template($('#filename-template').html()),
+
+		initialize: function() {
+			console.log("filenameview initialize()");
+		},
 
 		tagName: 'li',
 
@@ -27,23 +40,24 @@ function init() {
 			return this;
 		},
 
-		initialize: function() {
-			this.model.set('length', this.model.get('content').length);
-		},
-
 		edit: function() {
 			console.log("edit triggered!");
 		}
 	});
 
-	var f1 = new File({ name: 'file1', content: 'stuff' });
-	var f2 = new File({ name: 'file2', content: 'more stuff' });
+	var FilesView = Backbone.View.extend({
+		el: '#files',
 
-	var v1 = new FilenameView({ model: f1 });
-	var v2 = new FilenameView({ model: f2 });
+		render: function() {
+			this.$el.append($("<li>Foo</li>"));
+			return this;
+		}
+	});
 
-	$('ul').append(v1.render().$el);
-	$('ul').append(v2.render().$el);
+	var files = new Files();
+	files.fetch();
+	var filesView = new FilesView({ collection: files });
+	filesView.render();
 }
 
 $(init);
