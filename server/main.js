@@ -51,6 +51,20 @@ app.post('/files', function(req, res) {
 	console.log("POST, body", req.body);
 });
 
+app.put('/files/:id', function(req, res) {
+	
+	fs.writeFile(path.join(rootDir, req.body.name),
+		req.body.content, function(err, result) {
+			if (err) {
+				res.status(403);
+				console.log("Error was", err);
+				res.end(err.message);
+			} else {
+				res.end(JSON.stringify({ result: 'ok' }));
+			}
+		});
+});
+
 app.listen(port, function() {
 	console.log("Listening to http://localhost:" + port + "/");
 });

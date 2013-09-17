@@ -10,7 +10,6 @@ function init() {
 		},
 
 		initialize: function() {
-			console.log("file initialize()");
 			this.on('change:content', this.nameChanged);
 		},
 
@@ -23,9 +22,6 @@ function init() {
 
 	var Files = Backbone.Collection.extend({
 		model: File,
-		initialize: function() {
-			console.log("files initialize()");
-		},
 		url: '/files'
 	});
 
@@ -33,7 +29,6 @@ function init() {
 		template: _.template($('#filename-template').html()),
 
 		initialize: function() {
-			console.log("filenameview initialize()");
 			this.listenTo(this.model, 'change', this.render);
 		},
 
@@ -88,9 +83,19 @@ function init() {
 		},
 
 		change: function() {
-			console.log('changed', this.$el.val());
 			if (this.model) {
-				this.model.set('content', this.$textarea.val());
+				// TODO report "saving..." state
+				var xhr = this.model.save({ 
+					content: this.$textarea.val()
+				}, {
+					wait: true,
+				});
+				xhr.fail(function(xhr) {
+					alert("Error saving file: " + xhr.responseText);
+				});
+				xhr.success(function(what) {
+					console.log("Success", what);
+				});
 			}
 		}
 
