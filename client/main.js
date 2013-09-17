@@ -12,7 +12,9 @@ function init() {
 
 		initialize: function() {
 			console.log("file initialize()");
-		}
+		},
+
+		idAttribute: 'name'
 	});
 
 	var Files = Backbone.Collection.extend({
@@ -44,6 +46,11 @@ function init() {
 
 		edit: function() {
 			console.log("edit triggered!");
+			// TODO renaming is a bit trickier, do something else
+			// then
+			//this.model.set('name', this.model.get('name') + 'x');
+			//console.log("saving model", this.model);
+			//this.model.save();
 		}
 	});
 

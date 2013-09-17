@@ -9,6 +9,7 @@ var rootDir = __dirname + '/../testfiles';
 app.use(express.static(__dirname + '/../client'));
 app.use(express.favicon());
 app.use(express.logger());
+app.use(express.bodyParser());
 
 app.get('/files', function(req, res) {
 	fs.readdir(rootDir, function(err, files) {
@@ -20,6 +21,10 @@ app.get('/files', function(req, res) {
 		});
 		res.end(JSON.stringify(result));
 	});
+});
+
+app.post('/files', function(req, res) {
+	console.log("POST, body", req.body);
 });
 
 app.listen(port, function() {
