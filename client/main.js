@@ -1,5 +1,9 @@
 function init() {
 	console.log("Hi!");
+
+	var app = {
+	};
+
 	var File = Backbone.Model.extend({
 		defaults: {
 			name: 'unnamed',
@@ -48,16 +52,27 @@ function init() {
 	var FilesView = Backbone.View.extend({
 		el: '#files',
 
-		render: function() {
-			this.$el.append($("<li>Foo</li>"));
-			return this;
+		initialize: function() {
+			this.listenTo(app.files, 'reset', this.addAll);
+			app.files.fetch({ reset: true });
+		},
+
+		addOne: function(file) {
+			var view = new FilenameView({ model: file });
+			this.$el.append(view.render().el);
+		},
+
+		addAll: function() {
+			var that = this;
+			this.$el.empty();
+			app.files.each(function(file) {
+				that.addOne(file);
+			});
 		}
 	});
 
-	var files = new Files();
-	files.fetch();
-	var filesView = new FilesView({ collection: files });
-	filesView.render();
+	app.files = new Files();
+	app.filesView = new FilesView();
 }
 
 $(init);
