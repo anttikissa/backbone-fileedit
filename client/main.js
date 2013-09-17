@@ -7,13 +7,11 @@ function init() {
 	var File = Backbone.Model.extend({
 		defaults: {
 			name: 'unnamed',
-			length: 0,
-			content: ''
+			length: 0
 		},
 
 		initialize: function() {
 			console.log("file initialize()");
-			this.set('length', this.get('content').length);
 		}
 	});
 
