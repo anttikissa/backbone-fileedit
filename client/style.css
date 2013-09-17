@@ -1,0 +1,9 @@
+body {
+	color: #222;
+}
+
+textarea {
+	width: 600px;
+	height: 140px;
+	font: 14px/18px Courier;
+}

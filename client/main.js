@@ -1,17 +1,21 @@
 function init() {
-	console.log("Hi!");
-
 	var app = {
 	};
 
 	var File = Backbone.Model.extend({
 		defaults: {
 			name: 'unnamed',
-			length: 0
+			length: 0,
+			content: ''
 		},
 
 		initialize: function() {
 			console.log("file initialize()");
+			this.on('change:content', this.nameChanged);
+		},
+
+		nameChanged: function(what, to) {
+			this.set('length', to.length);
 		},
 
 		idAttribute: 'name'
@@ -30,6 +34,7 @@ function init() {
 
 		initialize: function() {
 			console.log("filenameview initialize()");
+			this.listenTo(this.model, 'change', this.render);
 		},
 
 		tagName: 'li',
@@ -45,13 +50,50 @@ function init() {
 		},
 
 		edit: function() {
-			console.log("edit triggered!");
-			// TODO renaming is a bit trickier, do something else
-			// then
-			//this.model.set('name', this.model.get('name') + 'x');
-			//console.log("saving model", this.model);
-			//this.model.save();
+			app.fileContentView.setModel(this.model);
 		}
+	});
+
+	var FileContentView = Backbone.View.extend({
+		el: '#content',
+
+		initialize: function() {
+			this.$p = this.$el.find('p');
+			this.$filename = this.$p.find('.filename');
+			this.$textarea = this.$el.find('textarea');
+			this.setModel(null);
+		},
+
+		events: {
+			'change': 'change'
+		},
+
+		setModel: function(model) {
+			this.model = model;
+			this.render();
+		},
+
+		render: function() {
+			if (this.model) {
+				this.$p.show();
+				this.$filename.html('hello');
+				this.$textarea.val(this.model.get('content'))
+					.attr('readonly', false);
+			} else {
+				this.$p.hide();
+				this.$textarea.empty()
+					.attr('readonly', true);
+			}
+			return this;
+		},
+
+		change: function() {
+			console.log('changed', this.$el.val());
+			if (this.model) {
+				this.model.set('content', this.$textarea.val());
+			}
+		}
+
 	});
 
 	var FilesView = Backbone.View.extend({
@@ -78,6 +120,7 @@ function init() {
 
 	app.files = new Files();
 	app.filesView = new FilesView();
+	app.fileContentView = new FileContentView();
 }
 
 $(init);

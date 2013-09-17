@@ -17,7 +17,7 @@ app.get('/files', function(req, res) {
 			throw err;
 		}
 		result = files.map(function(filename) {
-			return { name: filename, length: 123 };
+			return { name: filename, length: 123, content: 'fubar' };
 		});
 		res.end(JSON.stringify(result));
 	});
