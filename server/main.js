@@ -1,25 +1,49 @@
 var express = require('express');
 var fs = require('fs');
+var path = require('path');
+var async = require('async');
 
 var app = express();
 
 var port = 3000;
-var rootDir = __dirname + '/../testfiles';
+var rootDir = path.join(__dirname, '../testfiles');
 
-app.use(express.static(__dirname + '/../client'));
+app.use(express.static(path.join(__dirname, '../client')));
 app.use(express.favicon());
 app.use(express.logger());
 app.use(express.bodyParser());
 
+function statFile(rootDir) {
+	return function(filename, cb) {
+		fs.stat(path.join(rootDir, filename), cb);
+	}
+}
+
+function readFile(rootDir) {
+	return function(filename, cb) {
+		return fs.readFile(path.join(rootDir, filename), 'utf8', cb);
+	}
+}
+
 app.get('/files', function(req, res) {
-	fs.readdir(rootDir, function(err, files) {
-		if (err) {
-			throw err;
-		}
-		result = files.map(function(filename) {
-			return { name: filename, length: 123, content: 'fubar' };
+	fs.readdir(rootDir, function(err, filenames) {
+		if (err) throw err;
+
+		async.map(filenames, statFile(rootDir), function(err, stats) {
+			if (err) throw err;
+
+			async.map(filenames, readFile(rootDir), function(err, fileContents) {
+				if (err) throw err;
+
+				result = filenames.map(function(filename, idx) {
+					var stat = stats[idx];
+					var content = fileContents[idx];
+					console.log("File content for " + filename + ": " + content);
+					return { name: filename, length: stat.size, content: content };
+				});
+				res.end(JSON.stringify(result));
+			});
 		});
-		res.end(JSON.stringify(result));
 	});
 });
 

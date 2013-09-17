@@ -76,7 +76,7 @@ function init() {
 		render: function() {
 			if (this.model) {
 				this.$p.show();
-				this.$filename.html('hello');
+				this.$filename.html(this.model.get('name'));
 				this.$textarea.val(this.model.get('content'))
 					.attr('readonly', false);
 			} else {
