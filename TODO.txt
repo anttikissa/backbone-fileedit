@@ -3,8 +3,10 @@
 
 - Separate file entries (= [name, length]) from file contents (= [name, content])
   to avoid loading all files on start
+
 - Add hierarcy
 
 Done:
+
 - Add router
 
