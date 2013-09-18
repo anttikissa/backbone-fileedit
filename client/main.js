@@ -1,6 +1,8 @@
 var app = {
 };
 
+_.extend(app, Backbone.Events);
+
 var File = Backbone.Model.extend({
 	defaults: {
 		name: 'unnamed',
@@ -33,18 +35,10 @@ var FilenameView = Backbone.View.extend({
 
 	tagName: 'li',
 
-	events: {
-		'click': 'edit'
-	},
-
 	render: function() {
 		var json = this.model.toJSON();
 		this.$el.html(this.template(this.model.toJSON()));
 		return this;
-	},
-
-	edit: function() {
-		app.fileContentView.setModel(this.model);
 	}
 });
 
@@ -64,15 +58,12 @@ var FileContentView = Backbone.View.extend({
 		'click .refresh': 'refresh'
 	},
 
+	setFile: function(name) {
+		var model = app.files.findWhere({ name: name });
+		this.setModel(model);
+	},
+
 	setModel: function(model) {
-		if (this.model) {
-			console.log("setModel, old model", this.model.get('name'));
-		}
-		if (model) {
-			console.log("setModel, new model", model.get('name'));
-//			if (model.get('name') === 'file1.txt')
-//				debugger;
-		}
 		if (this.model) {
 			this.stopListening(this.model);
 		}
@@ -85,13 +76,12 @@ var FileContentView = Backbone.View.extend({
 
 	render: function() {
 		if (this.model) {
-			console.log("Rendering. model", this.model.get('name'));
 			this.$filename.html(this.model.get('name'));
 			this.$textarea.val(this.model.get('content'))
 				.attr('readonly', false);
 		} else {
 			this.$filename.html('(no file)');
-			this.$textarea.empty()
+			this.$textarea.val('')
 				.attr('readonly', true);
 		}
 		return this;
@@ -137,7 +127,13 @@ var FilesView = Backbone.View.extend({
 
 	initialize: function() {
 		this.listenTo(app.files, 'reset', this.addAll);
-		app.files.fetch({ reset: true });
+		var xhr = app.files.fetch({ reset: true });
+		xhr.error(function(xhr) {
+			alert("Error loading files: " + xhr.responseText);
+		});
+		xhr.success(function(what) {
+			app.trigger('initialLoad');
+		});
 	},
 
 	addOne: function(file) {
@@ -154,11 +150,21 @@ var FilesView = Backbone.View.extend({
 	}
 });
 
+var Workspace = Backbone.Router.extend({
+	routes: {
+		'*name': 'setFile'
+	},
+
+	setFile: function(name) {
+		app.fileContentView.setFile(name);
+	}
+});
+
 app.files = new Files();
 app.filesView = new FilesView();
 app.fileContentView = new FileContentView();
+app.router = new Workspace();
 
-//app.files.on('sync', function() {
-//	app.fileContentView.setModel(app.files.models[0]);
-//	console.log("change");
-//});
+app.once('initialLoad', function() {
+	Backbone.history.start();
+});

@@ -11,7 +11,7 @@
 </head>
 <body>
 	<script type='text/template' id='filename-template'>
-		<a href='#'>
+		<a href='#/<%= name %>'>
 			<%= name %>
  (<%= length %> bytes)
 		</a>
@@ -27,15 +27,11 @@
 
 		<div class='row'>
 			<div class='col-md-4'>
-				<p>List of files:
-
 				<ul class='directory' id='files'>
 				</ul>
-
 			</div>
 
 			<div class='col-md-8'>
-
 				<div id='content'>
 					<div>
 						<p class='filename'></p>
