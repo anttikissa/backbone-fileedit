@@ -50,6 +50,8 @@ var FileContentView = Backbone.View.extend({
 		this.$filename = this.$el.find('.filename');
 		this.$textarea = this.$el.find('textarea');
 		this.$status = this.$el.find('.status');
+		this.$save = this.$el.find('.save');
+		this.$refresh = this.$el.find('.refresh');
 		this.setModel(null);
 	},
 
@@ -75,7 +77,9 @@ var FileContentView = Backbone.View.extend({
 	},
 
 	render: function() {
-		if (this.model) {
+		var hasModel = this.model != null;
+
+		if (hasModel) {
 			this.$filename.html(this.model.get('name'));
 			this.$textarea.val(this.model.get('content'))
 				.attr('readonly', false);
@@ -84,6 +88,10 @@ var FileContentView = Backbone.View.extend({
 			this.$textarea.val('')
 				.attr('readonly', true);
 		}
+
+		this.$save.attr('disabled', !hasModel);
+		this.$refresh.attr('disabled', !hasModel);
+
 		return this;
 	},
 
@@ -109,13 +117,12 @@ var FileContentView = Backbone.View.extend({
 
 	refresh: function() {
 		if (this.model) {
-			console.log("Refreshing. Model is ", this.model);
 			var xhr = this.model.fetch();
 			xhr.fail(function(xhr) {
 				console.log("Failed to refresh", xhr.responseText);
 			});
 			xhr.success(function(what) {
-				console.log("Success", what);
+//				console.log("Success", what);
 			});
 		}
 	}
