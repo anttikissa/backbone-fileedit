@@ -48,6 +48,7 @@ app.get('/files', function(req, res) {
 });
 
 app.post('/files', function(req, res) {
+	// TODO this happened when? On trying to rename a file?
 	console.log("POST, body", req.body);
 });
 
@@ -67,7 +68,6 @@ app.put('/files/:id', function(req, res) {
 app.get('/files/:id', function(req, res) {
 	var filename = req.params.id;
 	fs.readFile(path.join(rootDir, filename), 'utf8', function(err, result) {
-		console.log("Returning " + typeof result + ": " + result);
 		if (err) {
 			res.status(404);
 			res.end(err.message);
