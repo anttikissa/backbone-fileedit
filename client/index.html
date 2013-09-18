@@ -5,21 +5,54 @@
 	<script src='jquery-2.0.3.js'></script>
 	<script src='underscore.js'></script>
 	<script src='backbone.js'></script>
-	<script src='main.js'></script>
+	<link rel='stylesheet' href='bootstrap.css'>
+	<link rel='stylesheet' href='bootstrap-theme.css'>
 	<link rel='stylesheet' href='style.css'>
 </head>
 <body>
 	<script type='text/template' id='filename-template'>
-		<%= name %> (length: <%= length %> bytes)
+		<a href='#'>
+			<%= name %>
+ (<%= length %> bytes)
+		</a>
 	</script>
 
-	<p>List of files:
+	<div class='container'>
 
-	<ul id='files'>
-	</ul>
+		<ul class='breadcrumb'>
+			<li><a>[root]</a></li>
+			<li><a>dir</a></li>
+			<li><a>file</a></li>
+		</ul>
 
-	<div id='content'>
-		<p>File <span class='filename'></span>:</p>
-		<textarea></textarea> 
+		<div class='row'>
+			<div class='col-md-4'>
+				<p>List of files:
+
+				<ul class='directory' id='files'>
+				</ul>
+
+			</div>
+
+			<div class='col-md-8'>
+
+				<div id='content'>
+					<div>
+						<p class='filename'></p>
+						<textarea></textarea>
+					</div>
+					<div class='buttons'>
+						<button class='save btn'>Save</button>
+						<button class='refresh btn'>Refresh</button>
+						<span class='status'></span>
+					</div>
+				</div>
+
+			</div>
+
+		</div>
+
 	</div>
+
+	<script src='main.js'></script>
 </body>

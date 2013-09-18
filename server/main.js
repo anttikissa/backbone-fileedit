@@ -52,8 +52,7 @@ app.post('/files', function(req, res) {
 });
 
 app.put('/files/:id', function(req, res) {
-	
-	fs.writeFile(path.join(rootDir, req.body.name),
+	fs.writeFile(path.join(rootDir, req.params.id),
 		req.body.content, function(err, result) {
 			if (err) {
 				res.status(403);
@@ -63,6 +62,19 @@ app.put('/files/:id', function(req, res) {
 				res.end(JSON.stringify({ result: 'ok' }));
 			}
 		});
+});
+
+app.get('/files/:id', function(req, res) {
+	var filename = req.params.id;
+	fs.readFile(path.join(rootDir, filename), 'utf8', function(err, result) {
+		console.log("Returning " + typeof result + ": " + result);
+		if (err) {
+			res.status(404);
+			res.end(err.message);
+		} else {
+			res.end(JSON.stringify({ name: filename, content: result }));
+		}
+	});
 });
 
 app.listen(port, function() {
